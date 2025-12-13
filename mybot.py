@@ -7,7 +7,7 @@ import re
 import html
 
 # ================== CONFIG ==================
-BOT_TOKEN = "8210871003:AAHtUIfdZFjXOdCTmpYeAtASVARDYJRV8HE"
+BOT_TOKEN = "7990743595:AAH8aloHTnFVxLdQadQFEKdeL42aALrsy8c"
 ADMIN_IDS = [6415960307]
 
 DEFAULT_CREDITS = 50
