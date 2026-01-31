@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Telegram Mini Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: Arial;
+            background: #111;
+            color: #fff;
+            text-align: center;
+            padding: 30px;
+        }
+        button {
+            padding: 15px 25px;
+            font-size: 18px;
+            border: none;
+            border-radius: 10px;
+            background: #00ff99;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<h2>🎮 Click Game</h2>
+<p>Button ko jitni baar click karoge score badhega</p>
+
+<h1 id="score">0</h1>
+
+<button onclick="play()">CLICK ME</button>
+
+<script>
+let score = 0;
+function play() {
+    score++;
+    document.getElementById("score").innerText = score;
+}
+</script>
+
+</body>
+</html>
