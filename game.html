@@ -1,60 +1,203 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Downloader</title>
-    <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
-        h2 { color: #ff0000; }
-        input { width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-        button { background: #ff0000; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; }
-        button:hover { background: #cc0000; }
-        #result { margin-top: 20px; }
-        .download-btn { background: #28a745; text-decoration: none; color: white; padding: 10px; border-radius: 5px; display: inline-block; margin-top: 10px; }
-    </style>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smooth Photo Editor with Bound Crop</title>
+<style>
+body{
+  background:#111;
+  color:#fff;
+  font-family:Arial;
+  text-align:center;
+}
+#wrapper{
+  position:relative;
+  display:inline-block;
+}
+canvas{
+  max-width:100%;
+  border:2px solid #333;
+}
+#cropBox{
+  position:absolute;
+  border:2px solid #fff;
+  box-sizing:border-box;
+}
+.handle{
+  width:14px;
+  height:14px;
+  background:#fff;
+  border-radius:50%;
+  position:absolute;
+}
+.tl{left:-7px;top:-7px}
+.tr{right:-7px;top:-7px}
+.bl{left:-7px;bottom:-7px}
+.br{right:-7px;bottom:-7px}
+
+.box{
+  background:#222;
+  padding:12px;
+  margin:10px;
+  border-radius:10px;
+}
+input[type=range]{width:100%}
+button{
+  padding:8px 14px;
+  border:none;
+  border-radius:6px;
+  background:#0f9;
+  font-weight:bold;
+  margin:4px;
+}
+</style>
 </head>
 <body>
 
-<div class="container">
-    <h2>YT Downloader</h2>
-    <p>Paste your video link below:</p>
-    <input type="text" id="videoUrl" placeholder="https://www.youtube.com/watch?v=...">
-    <button onclick="downloadVideo()">Get Download Link</button>
+<h3>🖼️ Smooth CapCut-Style Editor</h3>
 
-    <div id="result"></div>
+<!-- FILE + CROP TOGGLE -->
+<input type="file" accept="image/*" onchange="loadImage(event)">
+<button onclick="toggleCrop()">Crop OFF ✂️</button>
+
+<br><br>
+
+<div id="wrapper">
+  <canvas id="canvas"></canvas>
+  <div id="cropBox">
+    <div class="handle tl"></div>
+    <div class="handle tr"></div>
+    <div class="handle bl"></div>
+    <div class="handle br"></div>
+  </div>
 </div>
 
+<div class="box">
+Brightness
+<input type="range" min="50" max="150" value="100" oninput="applyFilters()">
+Contrast
+<input type="range" min="50" max="150" value="100" oninput="applyFilters()">
+Saturation
+<input type="range" min="0" max="200" value="100" oninput="applyFilters()">
+Blur
+<input type="range" min="0" max="8" value="0" oninput="applyFilters()">
+</div>
+
+<button onclick="applyCrop()">Apply Crop ✂️</button>
+<button onclick="download()">Download 💾</button>
+
 <script>
-    async function downloadVideo() {
-        const url = document.getElementById('videoUrl').value;
-        const resultDiv = document.getElementById('result');
-        
-        if(!url) { alert("Please paste a URL!"); return; }
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d");
+const crop=document.getElementById("cropBox");
+let img=new Image();
+let baseImage;
+let active=null,sx,sy,sw,sh,sl,st;
+let cropEnabled=true;
 
-        resultDiv.innerHTML = "⏳ Processing...";
+const sliders=document.querySelectorAll("input[type=range]");
 
-        // Note: Using a public API for demonstration. 
-        // Real-world apps often use private RapidAPI keys.
-        try {
-            const response = await fetch(`https://api.your-chosen-api-provider.com/download?url=${encodeURIComponent(url)}`);
-            const data = await response.json();
+function loadImage(e){
+ img.onload=()=>{
+  canvas.width=img.width;
+  canvas.height=img.height;
+  ctx.drawImage(img,0,0);
+  baseImage=ctx.getImageData(0,0,canvas.width,canvas.height);
 
-            if(data.success) {
-                resultDiv.innerHTML = `
-                    <p><strong>${data.title}</strong></p>
-                    <a href="${data.download_url}" class="download-btn" target="_blank">Download MP4</a>
-                `;
-            } else {
-                resultDiv.innerHTML = "❌ Error: Could not fetch video.";
-            }
-        } catch (error) {
-            resultDiv.innerHTML = "❌ API Error. (Check Console)";
-            console.error(error);
-        }
-    }
+  crop.style.left="20%";
+  crop.style.top="20%";
+  crop.style.width="60%";
+  crop.style.height="60%";
+  crop.style.display="block";
+ };
+ img.src=URL.createObjectURL(e.target.files[0]);
+}
+
+function applyFilters(){
+ if(!baseImage) return;
+ ctx.putImageData(baseImage,0,0);
+ ctx.filter=`brightness(${sliders[0].value}%)
+             contrast(${sliders[1].value}%)
+             saturate(${sliders[2].value}%)
+             blur(${sliders[3].value}px)`;
+ ctx.drawImage(canvas,0,0);
+}
+
+function toggleCrop(){
+ cropEnabled=!cropEnabled;
+ crop.style.display=cropEnabled?"block":"none";
+ event.target.innerText=cropEnabled?"Crop OFF ✂️":"Crop ON ✂️";
+}
+
+/* ---- CROP MOVE / RESIZE WITH BOUNDARY ---- */
+crop.addEventListener("pointerdown",e=>{
+ if(!cropEnabled) return;
+ active=e.target.classList.contains("handle")?e.target.className:"move";
+ sx=e.clientX; sy=e.clientY;
+ sw=crop.offsetWidth; sh=crop.offsetHeight;
+ sl=crop.offsetLeft; st=crop.offsetTop;
+});
+
+window.addEventListener("pointermove",e=>{
+ if(!active || !cropEnabled) return;
+ let dx=e.clientX-sx, dy=e.clientY-sy;
+
+ // IMAGE BOUNDS
+const maxLeft=0;
+const maxTop=0;
+const maxRight=canvas.offsetWidth;
+const maxBottom=canvas.offsetHeight;
+
+  if(active==="move"){
+    let newL=Math.min(Math.max(sl+dx,maxLeft),maxRight-crop.offsetWidth);
+    let newT=Math.min(Math.max(st+dy,maxTop),maxBottom-crop.offsetHeight);
+    crop.style.left=newL+"px";
+    crop.style.top=newT+"px";
+  }
+
+  if(active.includes("br")){
+    let newW=Math.min(Math.max(sw+dx,20),maxRight-crop.offsetLeft);
+    let newH=Math.min(Math.max(sh+dy,20),maxBottom-crop.offsetTop);
+    crop.style.width=newW+"px";
+    crop.style.height=newH+"px";
+  }
+
+  if(active.includes("tl")){
+    let newL=Math.min(Math.max(sl+dx,0),sl+sw-20);
+    let newT=Math.min(Math.max(st+dy,0),st+sh-20);
+    let newW=sw-(newL-sl);
+    let newH=sh-(newT-st);
+    crop.style.left=newL+"px";
+    crop.style.top=newT+"px";
+    crop.style.width=newW+"px";
+    crop.style.height=newH+"px";
+  }
+});
+
+window.addEventListener("pointerup",()=>active=null);
+
+function applyCrop(){
+ if(!cropEnabled) return;
+ let sx=canvas.width/canvas.offsetWidth;
+ let sy=canvas.height/canvas.offsetHeight;
+ let x=crop.offsetLeft*sx;
+ let y=crop.offsetTop*sy;
+ let w=crop.offsetWidth*sx;
+ let h=crop.offsetHeight*sy;
+ let data=ctx.getImageData(x,y,w,h);
+ canvas.width=w; canvas.height=h;
+ ctx.putImageData(data,0,0);
+ baseImage=data;
+ crop.style.display="none";
+ cropEnabled=false;
+}
+
+function download(){
+ let a=document.createElement("a");
+ a.download="edited.png";
+ a.href=canvas.toDataURL();
+ a.click();
+}
 </script>
 
 </body>
