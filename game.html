@@ -1,115 +1,124 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Telegram Bot Maker</title>
+<title>Premium Nickname Generator</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body{
-    margin:0;
-    font-family:Arial, sans-serif;
-    background:linear-gradient(135deg,#0088cc,#00bfff);
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
+  margin:0;
+  background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);
+  font-family:Arial;
+  color:white;
+}
+.box{
+  max-width:400px;
+  margin:30px auto;
+  background:rgba(0,0,0,0.5);
+  padding:20px;
+  border-radius:16px;
+  text-align:center;
+  box-shadow:0 0 20px rgba(0,0,0,0.5);
 }
 
-.card{
-    background:#fff;
-    width:350px;
-    padding:25px;
-    border-radius:15px;
-    box-shadow:0 10px 30px rgba(0,0,0,0.3);
-    text-align:center;
+/* Top bar */
+.top{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+  margin-bottom:20px;
+  font-weight:bold;
+}
+.top a{
+  display:flex;
+  align-items:center;
+  text-decoration:none;
+  color:white;
+  gap:5px;
+}
+.top img{
+  width:25px;
+  height:25px;
 }
 
-.card img{
-    width:70px;
-    margin-bottom:10px;
+/* Nickname generator */
+input,button{
+  width:100%;
+  padding:12px;
+  margin-top:12px;
+  border:none;
+  border-radius:10px;
+  font-weight:bold;
+  font-size:16px;
 }
-
-h2{
-    margin:10px 0;
-    color:#0088cc;
-}
-
-input{
-    width:100%;
-    padding:12px;
-    margin:12px 0;
-    border-radius:8px;
-    border:1px solid #ccc;
-    font-size:14px;
-}
-
 button{
-    width:100%;
-    padding:12px;
-    background:#0088cc;
-    color:#fff;
-    border:none;
-    border-radius:25px;
-    font-size:16px;
-    cursor:pointer;
+  background:#ff0055;
+  color:white;
 }
-
-button:hover{
-    background:#006fa8;
-}
-
-.steps{
-    text-align:left;
-    font-size:13px;
-    margin-top:15px;
-    color:#333;
-}
-
-.result{
-    margin-top:15px;
-    font-size:14px;
-    color:green;
-    display:none;
+.nick{
+  margin-top:10px;
+  padding:10px;
+  background:#000;
+  border-radius:10px;
+  font-size:16px;
+  letter-spacing:1px;
+  word-wrap:break-word;
 }
 </style>
 </head>
 
 <body>
 
-<div class="card">
-    <img src="https://telegram.org/img/t_logo.png" alt="Telegram">
-    <h2>Telegram Bot Maker</h2>
+<div class="box">
+  <!-- Top bar -->
+  <div class="top">
+    <span>Developed</span>
+    <a href="https://www.instagram.com/sandeep._.op?igsh=MTJhZWpybTF6NmRkZw==" target="_blank">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Instagram">
+      sandeep._.op
+    </a>
+  </div>
 
-    <input type="text" id="token" placeholder="Enter Bot Token">
+  <h2>👑 Premium Nickname Generator</h2>
+  <small>Enter your name to get premium stylish nickname (symbols only)</small>
 
-    <button onclick="createBot()">Create Bot</button>
+  <input type="text" id="name" placeholder="Enter your name">
+  <button onclick="generate()">Generate Nicknames</button>
 
-    <div class="result" id="result">
-        ✅ Bot token saved successfully!  
-        <br>Now connect backend (PHP / Node)
-    </div>
-
-    <div class="steps">
-        <b>How to get Bot Token:</b>
-        <ol>
-            <li>Open Telegram</li>
-            <li>Search <b>@BotFather</b></li>
-            <li>Type <code>/start</code></li>
-            <li>Use <code>/newbot</code></li>
-            <li>Copy token & paste here</li>
-        </ol>
-    </div>
+  <div id="result"></div>
 </div>
 
 <script>
-function createBot(){
-    const token = document.getElementById("token").value;
-    if(token.length < 20){
-        alert("Please enter valid bot token");
-        return;
-    }
-    document.getElementById("result").style.display="block";
+const stylish = ["𝕯","𝖆","𝖗","𝖐","ツ","亗","乂","么","꧁","꧂","★","⚡","♛","彡","☯","☠","✦","❖","❂","✪","✧","✰"];
+const numbers = Array.from({length:999}, (_,i)=>i+1);
+const separators = ["","_","-","~","•","☆"];
+
+function generate(){
+  let name = document.getElementById("name").value.trim();
+  if(name===""){
+    alert("Please enter your name");
+    return;
+  }
+
+  const result = document.getElementById("result");
+  result.innerHTML = "";
+
+  for(let i=0;i<10;i++){ // 10 nicknames
+    let pre = stylish[Math.floor(Math.random()*stylish.length)];
+    let post = stylish[Math.floor(Math.random()*stylish.length)];
+    let sep = separators[Math.floor(Math.random()*separators.length)];
+    let num = numbers[Math.floor(Math.random()*numbers.length)];
+
+    // Construct nickname: pre + userName + separator + number + post
+    let nick = pre + name + sep + num + post;
+
+    let div = document.createElement("div");
+    div.className = "nick";
+    div.innerText = nick;
+    result.appendChild(div);
+  }
 }
 </script>
 
