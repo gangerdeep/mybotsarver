@@ -1,202 +1,115 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Smooth Photo Editor with Bound Crop</title>
+<meta charset="UTF-8">
+<title>Telegram Bot Maker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
 body{
-  background:#111;
-  color:#fff;
-  font-family:Arial;
-  text-align:center;
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:linear-gradient(135deg,#0088cc,#00bfff);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
 }
-#wrapper{
-  position:relative;
-  display:inline-block;
-}
-canvas{
-  max-width:100%;
-  border:2px solid #333;
-}
-#cropBox{
-  position:absolute;
-  border:2px solid #fff;
-  box-sizing:border-box;
-}
-.handle{
-  width:14px;
-  height:14px;
-  background:#fff;
-  border-radius:50%;
-  position:absolute;
-}
-.tl{left:-7px;top:-7px}
-.tr{right:-7px;top:-7px}
-.bl{left:-7px;bottom:-7px}
-.br{right:-7px;bottom:-7px}
 
-.box{
-  background:#222;
-  padding:12px;
-  margin:10px;
-  border-radius:10px;
+.card{
+    background:#fff;
+    width:350px;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.3);
+    text-align:center;
 }
-input[type=range]{width:100%}
+
+.card img{
+    width:70px;
+    margin-bottom:10px;
+}
+
+h2{
+    margin:10px 0;
+    color:#0088cc;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    margin:12px 0;
+    border-radius:8px;
+    border:1px solid #ccc;
+    font-size:14px;
+}
+
 button{
-  padding:8px 14px;
-  border:none;
-  border-radius:6px;
-  background:#0f9;
-  font-weight:bold;
-  margin:4px;
+    width:100%;
+    padding:12px;
+    background:#0088cc;
+    color:#fff;
+    border:none;
+    border-radius:25px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#006fa8;
+}
+
+.steps{
+    text-align:left;
+    font-size:13px;
+    margin-top:15px;
+    color:#333;
+}
+
+.result{
+    margin-top:15px;
+    font-size:14px;
+    color:green;
+    display:none;
 }
 </style>
 </head>
+
 <body>
 
-<h3>🖼️ Smooth CapCut-Style Editor</h3>
+<div class="card">
+    <img src="https://telegram.org/img/t_logo.png" alt="Telegram">
+    <h2>Telegram Bot Maker</h2>
 
-<!-- FILE + CROP TOGGLE -->
-<input type="file" accept="image/*" onchange="loadImage(event)">
-<button onclick="toggleCrop()">Crop OFF ✂️</button>
+    <input type="text" id="token" placeholder="Enter Bot Token">
 
-<br><br>
+    <button onclick="createBot()">Create Bot</button>
 
-<div id="wrapper">
-  <canvas id="canvas"></canvas>
-  <div id="cropBox">
-    <div class="handle tl"></div>
-    <div class="handle tr"></div>
-    <div class="handle bl"></div>
-    <div class="handle br"></div>
-  </div>
+    <div class="result" id="result">
+        ✅ Bot token saved successfully!  
+        <br>Now connect backend (PHP / Node)
+    </div>
+
+    <div class="steps">
+        <b>How to get Bot Token:</b>
+        <ol>
+            <li>Open Telegram</li>
+            <li>Search <b>@BotFather</b></li>
+            <li>Type <code>/start</code></li>
+            <li>Use <code>/newbot</code></li>
+            <li>Copy token & paste here</li>
+        </ol>
+    </div>
 </div>
-
-<div class="box">
-Brightness
-<input type="range" min="50" max="150" value="100" oninput="applyFilters()">
-Contrast
-<input type="range" min="50" max="150" value="100" oninput="applyFilters()">
-Saturation
-<input type="range" min="0" max="200" value="100" oninput="applyFilters()">
-Blur
-<input type="range" min="0" max="8" value="0" oninput="applyFilters()">
-</div>
-
-<button onclick="applyCrop()">Apply Crop ✂️</button>
-<button onclick="download()">Download 💾</button>
 
 <script>
-const canvas=document.getElementById("canvas");
-const ctx=canvas.getContext("2d");
-const crop=document.getElementById("cropBox");
-let img=new Image();
-let baseImage;
-let active=null,sx,sy,sw,sh,sl,st;
-let cropEnabled=true;
-
-const sliders=document.querySelectorAll("input[type=range]");
-
-function loadImage(e){
- img.onload=()=>{
-  canvas.width=img.width;
-  canvas.height=img.height;
-  ctx.drawImage(img,0,0);
-  baseImage=ctx.getImageData(0,0,canvas.width,canvas.height);
-
-  crop.style.left="20%";
-  crop.style.top="20%";
-  crop.style.width="60%";
-  crop.style.height="60%";
-  crop.style.display="block";
- };
- img.src=URL.createObjectURL(e.target.files[0]);
-}
-
-function applyFilters(){
- if(!baseImage) return;
- ctx.putImageData(baseImage,0,0);
- ctx.filter=`brightness(${sliders[0].value}%)
-             contrast(${sliders[1].value}%)
-             saturate(${sliders[2].value}%)
-             blur(${sliders[3].value}px)`;
- ctx.drawImage(canvas,0,0);
-}
-
-function toggleCrop(){
- cropEnabled=!cropEnabled;
- crop.style.display=cropEnabled?"block":"none";
- event.target.innerText=cropEnabled?"Crop OFF ✂️":"Crop ON ✂️";
-}
-
-/* ---- CROP MOVE / RESIZE WITH BOUNDARY ---- */
-crop.addEventListener("pointerdown",e=>{
- if(!cropEnabled) return;
- active=e.target.classList.contains("handle")?e.target.className:"move";
- sx=e.clientX; sy=e.clientY;
- sw=crop.offsetWidth; sh=crop.offsetHeight;
- sl=crop.offsetLeft; st=crop.offsetTop;
-});
-
-window.addEventListener("pointermove",e=>{
- if(!active || !cropEnabled) return;
- let dx=e.clientX-sx, dy=e.clientY-sy;
-
- // IMAGE BOUNDS
-const maxLeft=0;
-const maxTop=0;
-const maxRight=canvas.offsetWidth;
-const maxBottom=canvas.offsetHeight;
-
-  if(active==="move"){
-    let newL=Math.min(Math.max(sl+dx,maxLeft),maxRight-crop.offsetWidth);
-    let newT=Math.min(Math.max(st+dy,maxTop),maxBottom-crop.offsetHeight);
-    crop.style.left=newL+"px";
-    crop.style.top=newT+"px";
-  }
-
-  if(active.includes("br")){
-    let newW=Math.min(Math.max(sw+dx,20),maxRight-crop.offsetLeft);
-    let newH=Math.min(Math.max(sh+dy,20),maxBottom-crop.offsetTop);
-    crop.style.width=newW+"px";
-    crop.style.height=newH+"px";
-  }
-
-  if(active.includes("tl")){
-    let newL=Math.min(Math.max(sl+dx,0),sl+sw-20);
-    let newT=Math.min(Math.max(st+dy,0),st+sh-20);
-    let newW=sw-(newL-sl);
-    let newH=sh-(newT-st);
-    crop.style.left=newL+"px";
-    crop.style.top=newT+"px";
-    crop.style.width=newW+"px";
-    crop.style.height=newH+"px";
-  }
-});
-
-window.addEventListener("pointerup",()=>active=null);
-
-function applyCrop(){
- if(!cropEnabled) return;
- let sx=canvas.width/canvas.offsetWidth;
- let sy=canvas.height/canvas.offsetHeight;
- let x=crop.offsetLeft*sx;
- let y=crop.offsetTop*sy;
- let w=crop.offsetWidth*sx;
- let h=crop.offsetHeight*sy;
- let data=ctx.getImageData(x,y,w,h);
- canvas.width=w; canvas.height=h;
- ctx.putImageData(data,0,0);
- baseImage=data;
- crop.style.display="none";
- cropEnabled=false;
-}
-
-function download(){
- let a=document.createElement("a");
- a.download="edited.png";
- a.href=canvas.toDataURL();
- a.click();
+function createBot(){
+    const token = document.getElementById("token").value;
+    if(token.length < 20){
+        alert("Please enter valid bot token");
+        return;
+    }
+    document.getElementById("result").style.display="block";
 }
 </script>
 
