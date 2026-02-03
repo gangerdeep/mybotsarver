@@ -8,117 +8,215 @@
 <style>
 body{
   margin:0;
-  background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);
-  font-family:Arial;
-  color:white;
+  min-height:100vh;
+  font-family:Arial, sans-serif;
+  background: linear-gradient(270deg,#050816,#0b0f2e,#1a0f2e,#050816);
+  background-size:400% 400%;
+  animation:bgMove 15s ease infinite;
 }
+@keyframes bgMove{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+
 .box{
   max-width:400px;
   margin:30px auto;
-  background:rgba(0,0,0,0.5);
+  background:rgba(5,5,20,0.88);
   padding:20px;
-  border-radius:16px;
+  border-radius:20px;
   text-align:center;
-  box-shadow:0 0 20px rgba(0,0,0,0.5);
+  box-shadow:0 20px 40px rgba(0,0,0,0.95);
 }
 
-/* Top bar */
 .top{
   display:flex;
   justify-content:center;
   align-items:center;
   gap:10px;
-  margin-bottom:20px;
+  margin-bottom:15px;
   font-weight:bold;
+  color:white;
 }
 .top a{
   display:flex;
   align-items:center;
+  gap:6px;
   text-decoration:none;
-  color:white;
-  gap:5px;
+  color:#ff4fa3;
 }
-.top img{
-  width:25px;
-  height:25px;
+.top img{width:24px;height:24px;}
+
+.header{
+  background: linear-gradient(180deg,#000,#070716);
+  padding:22px 15px;
+  margin:-20px -20px 20px -20px;
+  border-radius:20px 20px 14px 14px;
+  color:white;
 }
 
-/* Nickname generator */
-input,button{
+input{
   width:100%;
-  padding:12px;
-  margin-top:12px;
+  padding:13px;
+  margin-top:14px;
   border:none;
-  border-radius:10px;
-  font-weight:bold;
+  border-radius:14px;
   font-size:16px;
+  font-weight:bold;
+  background:#02030c;
+  color:white;
+  autocomplete="off";
+  autocorrect="off";
+  autocapitalize="off";
+  spellcheck="false";
 }
+
 button{
-  background:#ff0055;
+  width:100%;
+  margin-top:16px;
+  padding:14px;
+  border:none;
+  border-radius:14px;
+  font-size:17px;
+  font-weight:bold;
+  color:white;
+  cursor:pointer;
+  background: linear-gradient(120deg,#0f3d2e,#1f7a4a,#0f3d2e);
+  background-size:200% 200%;
+  animation: greenGlow 3s ease infinite;
+}
+@keyframes greenGlow{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+
+.nick{
+  margin-top:12px;
+  padding:12px;
+  border-radius:12px;
+  font-size:18px;
+  letter-spacing:1px;
+  cursor:pointer;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+  color:white;
+  text-align:center;
+}
+.nick:hover{
+  background:rgba(255,255,255,0.05);
+}
+
+.arrow{
+  font-weight:bold;
+  background: linear-gradient(90deg,#ffd000,#ff0033);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.toast{
+  position:fixed;
+  bottom:30px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#000;
+  padding:10px 18px;
+  border-radius:20px;
+  opacity:0;
+  transition:.3s;
   color:white;
 }
-.nick{
-  margin-top:10px;
-  padding:10px;
-  background:#000;
-  border-radius:10px;
-  font-size:16px;
-  letter-spacing:1px;
-  word-wrap:break-word;
-}
+.toast.show{opacity:1;}
 </style>
 </head>
 
 <body>
 
 <div class="box">
-  <!-- Top bar -->
+
   <div class="top">
     <span>Developed</span>
-    <a href="https://www.instagram.com/sandeep._.op?igsh=MTJhZWpybTF6NmRkZw==" target="_blank">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Instagram">
+    <a href="https://www.instagram.com/sandeep._.op" target="_blank">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg">
       sandeep._.op
     </a>
   </div>
 
-  <h2>👑 Premium Nickname Generator</h2>
-  <small>Enter your name to get premium stylish nickname (symbols only)</small>
+  <div class="header">
+    <h2>👑 Premium Nickname Generator</h2>
+    <small>20+ Stylish Symbols & Fonts (a–z / A–Z)</small>
+  </div>
 
-  <input type="text" id="name" placeholder="Enter your name">
+  <input 
+    type="text" 
+    id="name" 
+    placeholder="Enter your name" 
+    autocomplete="off" 
+    autocorrect="off" 
+    autocapitalize="off" 
+    spellcheck="false"
+  >
   <button onclick="generate()">Generate Nicknames</button>
 
   <div id="result"></div>
 </div>
 
+<div class="toast" id="toast">Copied ✔</div>
+
 <script>
-const stylish = ["","ﾒ","ᛝ","⚡︎","緒","𝕯","𝖆","𝖗","𝖐","ツ","亗","乂","么","꧁","꧂","★","⚡","♛","彡","☯","☠","✦","❖","❂","✪","✧","✰"];
-const numbers = Array.from({length:999}, (_,i)=>i+1);
-const separators = ["","_","-","~","•","☆"];
+// Heavy and light symbols
+const heavy=["꧁","𓆩","♛","亗","☠","『","【"];
+const light=["✦","彡","★","☯","ツ","•"];
+const suffixH=["꧂","𓆪","♛","亗","☠","』","】"];
+const suffixL=["✦","彡","★","☯","ツ","•"];
+const middle=["","•","ツ","么","メ","✘","⚡","☯","✧","×"];
+
+// Fonts mapping fixed per character
+const fonts=[
+ {a:"𝖆",b:"𝖇",c:"𝖈",d:"𝖉",e:"𝖊",f:"𝖋",g:"𝖌",h:"𝖍",i:"𝖎",j:"𝖏",k:"𝖐",l:"𝖑",m:"𝖒",n:"𝖓",o:"𝖔",p:"𝖕",q:"𝖖",r:"𝖗",s:"𝖘",t:"𝖙",u:"𝖚",v:"𝖛",w:"𝖜",x:"𝖝",y:"𝖞",z:"𝖟",
+  A:"𝕬",B:"𝕭",C:"𝕮",D:"𝕯",E:"𝕰",F:"𝕱",G:"𝕲",H:"𝕳",I:"𝕴",J:"𝕵",K:"𝕶",L:"𝕷",M:"𝕸",N:"𝕹",O:"𝕺",P:"𝕻",Q:"𝕼",R:"𝕽",S:"𝕾",T:"𝕿",U:"𝖀",V:"𝖁",W:"𝖂",X:"𝖃",Y:"𝖄",Z:"𝖅"},
+ {a:"𝓪",b:"𝓫",c:"𝓬",d:"𝓭",e:"𝓮",f:"𝓯",g:"𝓰",h:"𝓱",i:"𝓲",j:"𝓳",k:"𝓴",l:"𝓵",m:"𝓶",n:"𝓷",o:"𝓸",p:"𝓹",q:"𝓺",r:"𝓻",s:"𝓼",t:"𝓽",u:"𝓾",v:"𝓿",w:"𝔀",x:"𝔁",y:"𝔂",z:"𝔃",
+  A:"𝓐",B:"𝓑",C:"𝓒",D:"𝓓",E:"𝓔",F:"𝓕",G:"𝓖",H:"𝓗",I:"𝓘",J:"𝓙",K:"𝓚",L:"𝓛",M:"𝓜",N:"𝓝",O:"𝓞",P:"𝓟",Q:"𝓠",R:"𝓡",S:"𝓢",T:"𝓣",U:"𝓤",V:"𝓥",W:"𝓦",X:"𝓧",Y:"𝓨",Z:"𝓩"}
+];
+
+// Convert input text to chosen font
+function stylishName(text,font){
+  return text.split("").map(c=>font[c]||c).join("");
+}
 
 function generate(){
-  let name = document.getElementById("name").value.trim();
-  if(name===""){
-    alert("Please enter your name");
-    return;
-  }
+  let name=document.getElementById("name").value.trim();
+  if(name===""){alert("Please enter your name");return;}
 
-  const result = document.getElementById("result");
-  result.innerHTML = "";
+  const result=document.getElementById("result");
+  result.innerHTML="";
 
-  for(let i=0;i<10;i++){ // 10 nicknames
-    let pre = stylish[Math.floor(Math.random()*stylish.length)];
-    let post = stylish[Math.floor(Math.random()*stylish.length)];
-    let sep = separators[Math.floor(Math.random()*separators.length)];
-    let num = numbers[Math.floor(Math.random()*numbers.length)];
+  // Select 1 random font per generate to keep letters consistent
+  let font=fonts[Math.floor(Math.random()*fonts.length)];
 
-    // Construct nickname: pre + userName + separator + number + post
-    let nick = pre + name + sep + num + post;
+  for(let i=0;i<5;i++){
+    let pre=Math.random()<0.5 ? heavy[Math.floor(Math.random()*heavy.length)] : light[Math.floor(Math.random()*light.length)];
+    let suf=Math.random()<0.5 ? suffixH[Math.floor(Math.random()*suffixH.length)] : suffixL[Math.floor(Math.random()*suffixL.length)];
+    let mid=middle[Math.floor(Math.random()*middle.length)];
 
-    let div = document.createElement("div");
-    div.className = "nick";
-    div.innerText = nick;
+    let nick=pre+stylishName(name,font)+mid+suf;
+
+    let div=document.createElement("div");
+    div.className="nick";
+    div.innerHTML=`<span class="arrow">➜</span><span>${nick}</span>`;
+    div.onclick=()=>copyText(nick);
     result.appendChild(div);
   }
+}
+
+function copyText(text){
+  navigator.clipboard.writeText(text);
+  let t=document.getElementById("toast");
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"),1200);
 }
 </script>
 
