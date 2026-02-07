@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Special Day</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-family:'Segoe UI',sans-serif;
+    overflow:hidden;
+
+    background: linear-gradient(-45deg, #000000, #1a0000, #3b0000, #000000);
+    background-size: 400% 400%;
+    animation: bgMove 14s ease infinite;
+}
+
+@keyframes bgMove{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
+
+.container{
+    text-align:center;
+    color:white;
+    padding:35px 30px;
+    background:rgba(0,0,0,0.35);
+    border-radius:30px;
+    backdrop-filter: blur(8px);
+
+    /* ANIMATED SHADOW */
+    animation: shadowGlow 6s infinite alternate;
+}
+
+@keyframes shadowGlow{
+    0%{
+        box-shadow:0 20px 60px rgba(255,0,0,0.45);
+    }
+    50%{
+        box-shadow:0 20px 60px rgba(180,0,255,0.45);
+    }
+    100%{
+        box-shadow:0 20px 60px rgba(255,80,120,0.45);
+    }
+}
+
+/* Decorative line */
+.line{
+    width:120px;
+    height:2px;
+    background:white;
+    margin:0 auto 18px;
+    opacity:0.8;
+}
+
+.girl img{
+    width:200px;
+    border-radius:25px;
+    box-shadow:0 18px 45px rgba(255,0,0,0.45);
+    border:2px solid rgba(255,255,255,0.25);
+}
+
+/* Name below photo */
+.photo-name{
+    margin-top:10px;
+    font-size:17px;
+    letter-spacing:3px;
+    color:#ffffff;
+    opacity:0.9;
+}
+
+/* Message */
+.msg{
+    margin-top:18px;
+    font-size:20px;
+    line-height:1.5;
+    color:#ffffff;
+    opacity:0.95;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="line"></div>
+
+    <div class="girl">
+        <img src="https://fatal-coffee-bcws028yri.edgeone.app/IMG_20260205_162053_098.jpg" alt="Girl">
+        <div class="photo-name">Muskan Singh</div>
+    </div>
+
+    <div class="msg">
+        🥀 Happy Rose Day<br>
+        You are my favorite rose
+    </div>
+
+</div>
+
+</body>
+</html>
