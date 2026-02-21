@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday Muskan</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+
+<style>
+body{
+    margin:0;
+    overflow:hidden;
+    background:#000;
+    font-family:'Great Vibes', cursive;
+}
+
+/* TEXT */
+.topText{
+    position:absolute;
+    top:40px;
+    width:100%;
+    text-align:center;
+    z-index:10;
+}
+
+.topText h1{
+    font-size:70px;
+    color:#ffffff;
+    margin:0;
+    text-shadow:0 0 25px #ffffff;
+}
+
+.topText h2{
+    font-size:55px;
+    margin-top:10px;
+    color:#ffb6d9;
+    text-shadow:0 0 25px #ff69b4;
+}
+
+/* PANDA IMAGE */
+.panda-container{
+    position:absolute;
+    bottom:80px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:20;
+}
+
+.panda-img{
+    width:350px;
+    border-radius:25px;
+    box-shadow:0 30px 80px rgba(255,255,255,0.25);
+    animation:float 4s ease-in-out infinite;
+}
+
+/* Floating Animation */
+@keyframes float{
+    0%{ transform:translateY(0px); }
+    50%{ transform:translateY(-20px); }
+    100%{ transform:translateY(0px); }
+}
+
+canvas{
+    position:absolute;
+    top:0;
+    left:0;
+}
+</style>
+</head>
+
+<body>
+
+<div class="topText">
+    <h1>Happy Birthday</h1>
+    <h2>Muskan </h2>
+</div>
+
+<div class="panda-container">
+    <img src="https://img.sanishtech.com/u/4f1b8cb88a334c45660b41b99a0604c5.png" class="panda-img">
+</div>
+
+<canvas id="canvas"></canvas>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let fireworks = [];
+let particles = [];
+
+class Firework{
+    constructor(){
+        this.x = Math.random()*canvas.width;
+        this.y = canvas.height;
+        this.targetY = Math.random()*(canvas.height*0.4);
+        this.speed = 13;
+        this.color = `hsl(${Math.random()*360},100%,60%)`;
+    }
+
+    update(){
+        this.y -= this.speed;
+        if(this.y <= this.targetY){
+            this.explode();
+            return true;
+        }
+        return false;
+    }
+
+    draw(){
+        ctx.beginPath();
+        ctx.arc(this.x,this.y,3,0,Math.PI*2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+    }
+
+    explode(){
+        for(let i=0;i<80;i++){
+            particles.push(new Particle(this.x,this.y,this.color));
+        }
+    }
+}
+
+class Particle{
+    constructor(x,y,color){
+        const angle = Math.random()*Math.PI*2;
+        const speed = Math.random()*6+2;
+        this.x = x;
+        this.y = y;
+        this.speedX = Math.cos(angle)*speed;
+        this.speedY = Math.sin(angle)*speed;
+        this.alpha = 1;
+        this.color = color;
+    }
+
+    update(){
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.speedY += 0.05;
+        this.alpha -= 0.02;
+        return this.alpha <= 0;
+    }
+
+    draw(){
+        ctx.globalAlpha = this.alpha;
+        ctx.beginPath();
+        ctx.arc(this.x,this.y,2,0,Math.PI*2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+    }
+}
+
+function animate(){
+    ctx.fillStyle="rgba(0,0,0,0.3)";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    if(Math.random()<0.07){
+        fireworks.push(new Firework());
+    }
+
+    fireworks = fireworks.filter(f=>{
+        f.draw();
+        return !f.update();
+    });
+
+    particles = particles.filter(p=>{
+        p.draw();
+        return !p.update();
+    });
+
+    requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+
+</body>
+</html>
