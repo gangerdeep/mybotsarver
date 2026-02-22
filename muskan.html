@@ -1,141 +1,325 @@
 <!DOCTYPE html>
-<html>
+<html lang="hi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Happy Birthday Muskan</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Muskan</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Laila:wght@600&display=swap" rel="stylesheet">
 
-<style>
-body{
-    margin:0;
-    overflow:hidden;
-    background:#000;
-    font-family:'Great Vibes', cursive;
-}
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #000;
+            font-family: 'Great Vibes', cursive;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-/* TEXT */
-.topText{
-    position:absolute;
-    top:40px;
-    width:100%;
-    text-align:center;
-    z-index:10;
-}
+        /* Fireworks Canvas - Fixed to Background */
+        #fireworksCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
 
-.topText h1{
-    font-size:70px;
-    color:#ffffff;
-    margin:0;
-    text-shadow:0 0 25px #ffffff;
-}
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
 
-.topText h2{
-    font-size:55px;
-    margin-top:10px;
-    color:#ffb6d9;
-    text-shadow:0 0 25px #ff69b4;
-}
+        /* --- HEARTBEAT --- */
+        .heartbeat-container {
+            width: 320px;
+            height: 80px;
+            margin-bottom: 20px;
+        }
 
-/* PANDA */
-.panda-container{
-    position:absolute;
-    bottom:80px;
-    left:50%;
-    transform:translateX(-50%);
-    z-index:20;
-}
+        .heartbeat-path {
+            stroke: #006400;
+            stroke-width: 4;
+            fill: none;
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: drawHeartbeat 3.5s linear infinite;
+        }
 
-.panda-img{
-    width:350px;
-    display:block;
-    animation:float 4s ease-in-out infinite;
-}
+        @keyframes drawHeartbeat {
+            0% { stroke-dashoffset: 1000; }
+            100% { stroke-dashoffset: 0; }
+        }
 
-/* Floating Animation */
-@keyframes float{
-    0%{ transform:translateY(0px); }
-    50%{ transform:translateY(-20px); }
-    100%{ transform:translateY(0px); }
-}
+        .topText h1 { font-size: 55px; color: #ffffff; margin: 0; text-shadow: 0 0 25px #ffffff; }
+        .topText h2 { font-size: 48px; margin: 5px 0 15px 0; color: #ffb6d9; text-shadow: 0 0 25px #ff69b4; }
 
-canvas{
-    position:absolute;
-    top:0;
-    left:0;
-}
-</style>
+        .panda-img { 
+            width: 250px; 
+            display: block; 
+            margin: 0 auto; 
+            border-radius: 20px;
+        }
+
+        /* --- GIFT BUTTON --- */
+        .surprise-btn {
+            margin-top: 25px;
+            width: 85px;
+            height: 85px;
+            cursor: pointer;
+            z-index: 100;
+            position: relative;
+            border-radius: 25px;
+            background: linear-gradient(135deg, #ff007f, #7a00ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: pulseButton 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulseButton { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+
+        /* --- SURPRISE PAGE (Transparent to show Fireworks) --- */
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4); /* Transparent black */
+            color: white;
+            display: none; flex-direction: column;
+            align-items: center; justify-content: center;
+            text-align: center; padding: 20px; z-index: 120;
+            backdrop-filter: blur(2px); /* Subtle blur for readability */
+        }
+
+        .top-controls {
+            position: absolute; top: 25px; left: 20px;
+            display: flex; align-items: center; gap: 25px;
+        }
+
+        .back-btn, .image-btn { cursor: pointer; }
+        .image-btn svg { width: 32px; height: 32px; fill: white; }
+
+        .love-top { font-size: 45px; margin-bottom: 20px; font-weight: bold; display: flex; align-items: center; justify-content: center; }
+        .normal-heart { font-size: 35px; margin: 0 12px; }
+
+        .hindi-text { font-family: 'Laila', serif; font-size: 24px; margin: 5px 0; color: #ffffff; line-height: 1.2; }
+
+        .overlay .english {
+            font-size: 30px;
+            margin-top: 20px;
+            font-weight: bold;
+            color: #ffb6d9;
+        }
+
+        .shine-text {
+            background: linear-gradient(90deg, #ffb6d9, #ffffff, #ffb6d9);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shineText 3s linear infinite;
+            display: inline-block;
+            padding: 0 10px;
+        }
+        @keyframes shineText { to { background-position: 200% center; } }
+
+        /* --- IMAGE VIEWER --- */
+        .image-view {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: black; display: none;
+            align-items: center; justify-content: center; z-index: 150;
+        }
+
+        .gallery-container {
+            position: relative;
+            width: 90%;
+            max-width: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gallery-container img {
+            width: 100%;
+            border-radius: 15px;
+            display: none;
+        }
+
+        .gallery-container img.active { display: block; }
+
+        .swipe-icon {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 40px;
+            color: white;
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 160;
+        }
+
+        #prevBtn { left: -20px; display: none; }
+        #nextBtn { right: -20px; }
+
+    </style>
 </head>
-
 <body>
 
-<div class="topText">
-    <h1>Happy Birthday</h1>
-    <h2>Muskan 🎉</h2>
-</div>
+    <canvas id="fireworksCanvas"></canvas>
 
-<div class="panda-container">
-    <!-- Transparent PNG from your GitHub repo -->
-    <img src="panda.png" class="panda-img">
-</div>
+    <div class="main-content" id="homePage">
+        <div class="heartbeat-container">
+            <svg viewBox="0 0 200 60"><path class="heartbeat-path" d="M0,30 L30,30 L40,10 L50,50 L65,30 L90,30 L105,5 L120,55 L135,30 L200,30" /></svg>
+        </div>
+        <div class="topText">
+            <h1>Happy Birthday</h1>
+            <h2>Muskan 🎉</h2>
+        </div>
+        <img src="https://files.catbox.moe/k2r85r.png" class="panda-img">
+        <div class="surprise-btn" onclick="openSurprise()">
+            <svg viewBox="0 0 24 24" width="45"><path fill="white" d="M20,6H17.62C17.86,5.69 18,5.32 18,5A3,3 0 0,0 15,2C13.84,2 12.82,2.65 12.29,3.61L12,4.14L11.71,3.61C11.18,2.65 10.16,2 9,2A3,3 0 0,0 6,5C6,5.32 6.14,5.69 6.38,6H4C2.89,6 2,6.89 2,8V9C2,9.71 2.37,10.33 2.93,10.69C2.96,10.79 3,10.9 3,11V20C3,21.11 3.89,22 5,22H19C20.11,22 21,21.11 21,20V11C21,10.9 21.04,10.79 21.07,10.69C21.63,10.33 22,9.71 22,9V8C22,6.89 21.11,6 20,6M9,4A1,1 0 0,1 10,5A1,1 0 0,1 9,6A1,1 0 0,1 8,5A1,1 0 0,1 9,4M15,4A1,1 0 0,1 16,5A1,1 0 0,1 15,6A1,1 0 0,1 14,5A1,1 0 0,1 15,4M4,8H11V10H4V8M13,8H20V10H13V8M5,12H11V20H5V12M19,20H13V12H19V20Z"/></svg>
+        </div>
+    </div>
 
-<canvas id="canvas"></canvas>
+    <div class="overlay" id="surprisePage">
+        <div class="top-controls">
+            <div class="back-btn" onclick="goBack()" style="font-size: 32px;">⬅</div>
+            <div class="image-btn" onclick="showImage()">
+                <svg viewBox="0 0 24 24"><path d="M21,19V5C21,3.89 20.1,3 19,3H5C3.89,3 3,3.89 3,5V19C3,20.1 3.89,21 5,21H19C20.1,21 21,20.1 21,19M8.5,13.5L11,16.5L14.5,12L19,18H5L8.5,13.5Z" /></svg>
+            </div>
+        </div>
+        
+        <div class="love-top">
+            <span class="shine-text">I</span>
+            <span class="normal-heart">❤️</span>
+            <span class="shine-text">Muskan</span>
+        </div>
 
-<script>
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
+        <p class="hindi-text">तुम खुद नहीं जानती तुम कितनी प्यारी हो</p>
+        <p class="hindi-text">जान हो मेरी पर जान से प्यारी हो</p>
+        <p class="hindi-text">दूरियों के होने से कोई फर्क नही पड़ता</p>
+        <p class="hindi-text">तुम कल भी मेरी थी और आज भी मेरी हो</p>
+        
+        <div class="english">
+            <span class="shine-text">I am very happy</span> 👸🏻💗 <br>
+            <span class="shine-text">Love you Jaan, Happy Birthday</span>
+        </div>
+    </div>
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+    <div class="image-view" id="imageView">
+        <div style="position:absolute; top:20px; left:20px; font-size:32px; color:white; cursor:pointer;" onclick="closeImage()">⬅</div>
+        <div class="gallery-container">
+            <img src="https://i.postimg.cc/gJnSZDcR/panda.png" class="active" id="img1">
+            <img src="https://i.postimg.cc/d0DY6gJH/3da21a0d5cb056c7dd6ac071115f527b-(1).jpg" id="img2">
+            <div id="prevBtn" class="swipe-icon" onclick="changeImage(-1)">❰</div>
+            <div id="nextBtn" class="swipe-icon" onclick="changeImage(1)">❱</div>
+        </div>
+    </div>
 
-let particles = [];
+    <script>
+        // --- Fireworks Logic ---
+        const canvas = document.getElementById("fireworksCanvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
 
-function firework(x,y,color){
-    for(let i=0;i<60;i++){
-        particles.push({
-            x:x,
-            y:y,
-            speedX:(Math.random()-0.5)*6,
-            speedY:(Math.random()-0.5)*6,
-            life:100,
-            color:color
-        });
-    }
-}
+        let fireworks = [];
+        let particles = [];
 
-function animate(){
-    ctx.fillStyle="rgba(0,0,0,0.2)";
-    ctx.fillRect(0,0,canvas.width,canvas.height);
+        class Firework {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height;
+                this.targetY = Math.random() * (canvas.height * 0.5);
+                this.speed = 8 + Math.random() * 5;
+                this.color = `hsl(${Math.random() * 360}, 100%, 60%)`;
+            }
+            update() {
+                this.y -= this.speed;
+                if (this.y <= this.targetY) {
+                    for (let i = 0; i < 40; i++) particles.push(new Particle(this.x, this.y, this.color));
+                    return true;
+                }
+                return false;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+        }
 
-    if(Math.random()<0.05){
-        firework(
-            Math.random()*canvas.width,
-            Math.random()*canvas.height*0.5,
-            `hsl(${Math.random()*360},100%,60%)`
-        );
-    }
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x; this.y = y; this.color = color;
+                this.speedX = (Math.random() - 0.5) * 7;
+                this.speedY = (Math.random() - 0.5) * 7;
+                this.life = 100;
+            }
+            update() { this.x += this.speedX; this.y += this.speedY; this.life -= 1.5; }
+            draw() {
+                ctx.globalAlpha = this.life / 100;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 1.8, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.globalAlpha = 1;
+            }
+        }
 
-    particles = particles.filter(p=>{
-        p.x+=p.speedX;
-        p.y+=p.speedY;
-        p.life--;
+        function animateFireworks() {
+            ctx.fillStyle = "rgba(0,0,0,0.15)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            if (Math.random() < 0.05) fireworks.push(new Firework());
+            fireworks = fireworks.filter(f => { f.draw(); return !f.update(); });
+            particles = particles.filter(p => { p.update(); p.draw(); return p.life > 0; });
+            requestAnimationFrame(animateFireworks);
+        }
 
-        ctx.globalAlpha=p.life/100;
-        ctx.beginPath();
-        ctx.arc(p.x,p.y,2,0,Math.PI*2);
-        ctx.fillStyle=p.color;
-        ctx.fill();
-        ctx.globalAlpha=1;
+        animateFireworks();
+        window.addEventListener("resize", () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
 
-        return p.life>0;
-    });
+        // --- UI Navigation ---
+        function openSurprise(){
+            document.getElementById("homePage").style.display="none";
+            document.getElementById("surprisePage").style.display="flex";
+        }
+        function goBack(){
+            document.getElementById("homePage").style.display="flex";
+            document.getElementById("surprisePage").style.display="none";
+        }
+        function showImage(){ document.getElementById("imageView").style.display="flex"; }
+        function closeImage(){ document.getElementById("imageView").style.display="none"; }
 
-    requestAnimationFrame(animate);
-}
-
-animate();
-</script>
-
+        function changeImage(step) {
+            const img1 = document.getElementById("img1");
+            const img2 = document.getElementById("img2");
+            const nextBtn = document.getElementById("nextBtn");
+            const prevBtn = document.getElementById("prevBtn");
+            if(step === 1) {
+                img1.classList.remove("active"); img2.classList.add("active");
+                nextBtn.style.display = "none"; prevBtn.style.display = "block";
+            } else {
+                img2.classList.remove("active"); img1.classList.add("active");
+                nextBtn.style.display = "block"; prevBtn.style.display = "none";
+            }
+        }
+    </script>
 </body>
 </html>
