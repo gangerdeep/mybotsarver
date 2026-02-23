@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Page Expired</title>
+
+<style>
+body{
+    margin:0;
+    padding:0;
+    background:#000;
+    color:#fff;
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:Arial, sans-serif;
+}
+
+.container{
+    text-align:center;
+    padding:40px;
+    border:1px solid rgba(255,255,255,0.2);
+    border-radius:15px;
+    background:rgba(255,255,255,0.05);
+    backdrop-filter:blur(5px);
+    box-shadow:0 0 30px rgba(255,0,0,0.4);
+    max-width:400px;
+    width:90%;
+}
+
+.icon{
+    font-size:70px;
+    margin-bottom:20px;
+    animation:blink 1s infinite alternate;
+}
+
+@keyframes blink{
+    from{opacity:0.4;}
+    to{opacity:1;}
+}
+
+h1{
+    font-size:28px;
+    margin-bottom:10px;
+    color:#ff4d4d;
+}
+
+p{
+    font-size:16px;
+    color:#ccc;
+    margin-bottom:25px;
+}
+
+button{
+    padding:10px 25px;
+    border:none;
+    border-radius:8px;
+    background:#ff0000;
+    color:#fff;
+    font-size:16px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+button:hover{
+    background:#cc0000;
+    transform:scale(1.05);
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="icon">👾</div>
+    <h1>Page Expired</h1>
+    <p>The page you are looking for has expired or is no longer available.</p>
+    <button onclick="location.reload()">Reload Page</button>
+</div>
+
+</body>
+</html>
