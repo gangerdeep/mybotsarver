@@ -1,153 +1,84 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Happy Birthday</title>
+<title>Page Expired</title>
 
 <style>
 body{
     margin:0;
-    background:black;
-    font-family:Arial;
+    padding:0;
+    background:#000;
+    color:#fff;
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:Arial, sans-serif;
+}
+
+.container{
     text-align:center;
-    color:white;
-    overflow:hidden;
+    padding:40px;
+    border:1px solid rgba(255,255,255,0.2);
+    border-radius:15px;
+    background:rgba(255,255,255,0.05);
+    backdrop-filter:blur(5px);
+    box-shadow:0 0 30px rgba(255,0,0,0.4);
+    max-width:400px;
+    width:90%;
 }
 
-/* TEXT */
-h1{margin-top:30px;font-size:50px;}
-h2{
-    color:#ff2da6;
-    text-shadow:0 0 10px #ff2da6,0 0 20px #ff2da6;
+.icon{
+    font-size:70px;
+    margin-bottom:20px;
+    animation:blink 1s infinite alternate;
 }
 
-/* CAKE */
-.cake{
-    width:220px;
-    height:120px;
-    margin:30px auto;
-    background:linear-gradient(#5a2e0f,#2b1406);
-    border-radius:20px;
-    position:relative;
-    z-index:5;
-}
-.cake:before{
-    content:"";
-    position:absolute;
-    top:-30px;
-    left:10px;
-    width:200px;
-    height:60px;
-    background:white;
-    border-radius:50%;
+@keyframes blink{
+    from{opacity:0.4;}
+    to{opacity:1;}
 }
 
-/* BALLOON */
-.balloon{
-    position:absolute;
-    width:40px;
-    height:55px;
-    border-radius:50%;
-    bottom:-60px;
-    z-index:10;
-    animation:rise 6s linear forwards;
-}
-@keyframes rise{
-    from{transform:translateY(0);}
-    to{transform:translateY(-110vh);}
-}
-
-/* FIREWORK */
-.spark{
-    position:absolute;
-    width:5px;
-    height:5px;
-    border-radius:50%;
-    z-index:1;
-    animation:explode 1s forwards;
-}
-@keyframes explode{
-    to{
-        transform:translate(var(--x),var(--y));
-        opacity:0;
-    }
-}
-
-/* HEART */
-.heart{
+h1{
     font-size:28px;
-    color:#ff0066;
-    text-shadow:0 0 10px #ff0066;
-    animation:pulse 1s infinite alternate;
-}
-@keyframes pulse{
-    from{transform:scale(1);}
-    to{transform:scale(1.2);}
+    margin-bottom:10px;
+    color:#ff4d4d;
 }
 
-/* HEARTBEAT */
-.line{
-    fill:none;
-    stroke:yellow;
-    stroke-width:3;
-    stroke-dasharray:400;
-    stroke-dashoffset:400;
-    animation:hb 2s linear infinite;
+p{
+    font-size:16px;
+    color:#ccc;
+    margin-bottom:25px;
 }
-@keyframes hb{
-    to{stroke-dashoffset:0;}
+
+button{
+    padding:10px 25px;
+    border:none;
+    border-radius:8px;
+    background:#ff0000;
+    color:#fff;
+    font-size:16px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+button:hover{
+    background:#cc0000;
+    transform:scale(1.05);
 }
 </style>
 </head>
 
 <body>
 
-<h1>Happy Birthday</h1>
-<h2>Muskan Singh</h2>
-
-<div class="cake"></div>
-
-<div class="heart">❤</div>
-
-<svg width="200" height="60">
-<path class="line"
-d="M0 30 L20 30 L30 10 L40 50 L50 30 L70 30 L80 20 L90 40 L100 30 L200 30"/>
-</svg>
-
-<script>
-
-/* BALLOONS */
-function createBalloon(){
-    let b=document.createElement("div");
-    b.className="balloon";
-    b.style.left=Math.random()*90+"%";
-    b.style.background="hsl("+Math.random()*360+",80%,60%)";
-    document.body.appendChild(b);
-
-    setTimeout(()=>{b.remove();},6000);
-}
-setInterval(createBalloon,800);
-
-/* FIREWORKS */
-function createFirework(){
-    let x=Math.random()*window.innerWidth;
-    let y=Math.random()*window.innerHeight/2;
-
-    for(let i=0;i<25;i++){
-        let s=document.createElement("div");
-        s.className="spark";
-        s.style.left=x+"px";
-        s.style.top=y+"px";
-        s.style.background="hsl("+Math.random()*360+",100%,60%)";
-        s.style.setProperty('--x',(Math.random()*200-100)+"px");
-        s.style.setProperty('--y',(Math.random()*200-100)+"px");
-        document.body.appendChild(s);
-        setTimeout(()=>s.remove(),1000);
-    }
-}
-setInterval(createFirework,2000);
-
-</script>
+<div class="container">
+    <div class="icon">⚠</div>
+    <h1>Page Expired</h1>
+    <p>The page you are looking for has expired or is no longer available.</p>
+    <button onclick="location.reload()">Reload Page</button>
+</div>
 
 </body>
 </html>
